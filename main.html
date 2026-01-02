@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوابة الاختبارات</title>
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:25px 15px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.container{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    padding:20px;
+}
+.card{
+    background:#fff;
+    border-radius:20px;
+    padding:25px 15px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    color:#0D47A1;
+    box-shadow:0 6px 20px rgba(0,0,0,.15);
+    cursor:pointer;
+    transition:.3s;
+}
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 25px rgba(0,0,0,.2);
+}
+.card span{
+    display:block;
+    margin-top:10px;
+    font-size:14px;
+    color:#555;
+}
+@media(max-width:600px){
+    .card{
+        font-size:16px;
+        padding:20px 12px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+بوابة الاختبارات
+</div>
+
+<div class="container">
+    <!-- اختبارات انجليزي -->
+    <div class="card" onclick="location.href='english1.html'">
+        اختبار اللغة الإنجليزية 1
+        <span>50 سؤال</span>
+    </div>
+    <div class="card" onclick="location.href='english2.html'">
+        اختبار اللغة الإنجليزية 2
+        <span>50 سؤال</span>
+    </div>
+    <div class="card" onclick="location.href='english3.html'">
+        اختبار اللغة الإنجليزية 3
+        <span>70 سؤال</span>
+    </div>
+
+    <!-- اختبارات حاسب آلي -->
+    <div class="card" onclick="location.href='haseb1.html'">
+        اختبار الحاسب الآلي 1
+        <span>50 سؤال</span>
+    </div>
+    <div class="card" onclick="location.href='haseb2.html'">
+        اختبار الحاسب الآلي 2
+        <span> 50 سؤال </span>
+    </div>
+    <div class="card" onclick="location.href='haseb3.html'">
+        اختبار الحاسب الآلي 3
+        <span> 55 سؤال</span>
+    </div>
+
+    <!-- اختبارات تربوي -->
+    <div class="card" onclick="location.href='Tarboy.html'">
+        اختبار تربوي 1
+        <span> 50 سؤال </span>
+    </div>
+    <div class="card" onclick="location.href='Tarboy1.html'">
+        اختبار تربوي 2
+        <span> 50 سؤال</span>
+    </div>
+    <div class="card" onclick="location.href='tarboy3.html'">
+        اختبار تربوي 3
+        <span> 100 سؤال</span>
+    </div>
+
+    <!-- اختبارات معلومات عامة -->
+    <div class="card" onclick="location.href='malomat1.html'">
+        اختبار المعلومات العامة 1
+        <span> 50 سؤال</span>
+    </div>
+    <div class="card" onclick="location.href='Malomat.html'">
+        اختبار المعلومات العامة 2
+        <span> 60 سؤال</span>
+    </div>
+    <div class="card" onclick="location.href='general_test3.html'">
+        اختبار المعلومات العامة 3
+        <span>أحداث حديثة</span>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوابة الاختبارات</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+body{
+    margin:0;
+    font-family:'Cairo', sans-serif;
+    background:linear-gradient(135deg,#0D47A1,#000);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+}
+
+.card{
+    background:rgba(0,0,0,0.30);
+    backdrop-filter: blur(8px);
+    border-radius:30px;
+    padding:30px 20px;
+    width:90%;
+    max-width:420px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,.2);
+    animation:fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.header{
+    margin-bottom:15px;
+    font-size:14px;
+    color:#FFD84D;
+}
+
+img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:4px solid #FFD84D;
+    object-fit:cover;
+    margin:15px 0;
+}
+
+h2{
+    margin:10px 0;
+    font-size:22px;
+}
+
+input{
+    width:80%;
+    padding:14px;
+    border-radius:15px;
+    border:none;
+    font-size:16px;
+    text-align:center;
+    margin-top:15px;
+}
+
+button{
+    margin-top:20px;
+    width:70%;
+    padding:14px;
+    border:none;
+    border-radius:20px;
+    font-size:18px;
+    background:linear-gradient(135deg,#FFD84D,#FFC107);
+    color:#000;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(0,0,0,.4);
+}
+
+#welcomeMsg{
+    margin-top:15px;
+    color:#FFD84D;
+    font-size:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+ <!-- ===== الهيدر ===== -->
+<div class="header">
+    <h2>م. على عادل على مروان</h2>
+    <h4>ت / 01000013069</h4>
+</div>
+
+    <img src="caoa.png" alt="صورة شخصية">
+
+    <h2>بوابة الاختبارات الذكية</h2>
+
+    <input type="text" id="username" placeholder="اكتب اسمك هنا" oninput="previewName()">
+
+    <div id="welcomeMsg"></div>
+
+    <button onclick="start()">ابدأ الاختبارات</button>
+
+</div>
+
+<script>
+function previewName(){
+    let name = document.getElementById("username").value;
+    document.getElementById("welcomeMsg").innerText =
+        name ? "أهلاً بيك يا " + name : "";
+}
+
+function start(){
+    let name = document.getElementById("username").value.trim();
+    if(name===""){
+        alert("من فضلك أدخل اسمك");
+        return;
+    }
+    localStorage.setItem("examUser", name);
+    window.location.href = "main.html";
+}
+</script>
+
+</body>
+</html>
