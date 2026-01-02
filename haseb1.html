@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار الحاسب الآلي - الجهاز المركزي</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+
+/* الهيدر */
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+
+/* شريط علوي */
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+
+/* الكارت */
+.container{
+    padding:15px;
+}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+
+/* السؤال */
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+
+/* الاختيارات */
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+    transition:.3s;
+}
+.option:hover{
+    background:#FFECB3;
+}
+.option.correct{
+    background:#4CAF50;
+    color:#fff;
+    border-color:#4CAF50;
+}
+.option.wrong{
+    background:#E53935;
+    color:#fff;
+    border-color:#E53935;
+}
+.option.disabled{
+    pointer-events:none;
+}
+
+/* رسالة الإجابة الصحيحة */
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+
+/* زر التالي */
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+/* النتيجة */
+.result{
+    text-align:center;
+    font-size:21px;
+    padding:30px;
+    color:#0D47A1;
+}
+
+/* موبايل */
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+اختبار الحاسب الآلي  
+<br>
+
+</div>
+
+<div class="top-info">
+    <div id="timer">30:00</div>
+    <div id="counter">1 / 50</div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+
+/* ===== أساسيات الحاسب ===== */
+{q:"البرنامج المسؤول عن إدارة موارد الحاسب يُسمى:",
+o:["التطبيق","نظام التشغيل","المترجم","المتصفح"],c:1},
+{q:"الذاكرة المسؤولة عن بدء تشغيل الجهاز هي:",o:["RAM","Cache","ROM","Hard Disk"],c:2},
+{q:"أي مما يلي يُعد جهازًا طرفيًا؟",o:["المعالج","اللوحة الأم","الطابعة","الرام"],c:2},
+{q:"أي وحدة من وحدات الإدخال؟",o:["الشاشة","السماعة","الماسح الضوئي","الطابعة"],c:2},
+{q:"أي وحدة من وحدات الإخراج؟",o:["الفأرة","لوحة المفاتيح","الكاميرا","الشاشة"],c:3},
+{q:"العامل الأكثر تأثيرًا في سرعة أداء الكمبيوتر:",o:["حجم الشاشة","نوع الطابعة","سعة RAM","لوحة المفاتيح"],c:2},
+{q:"امتداد ملف برنامج Word:",o:[".xls",".ppt",".docx",".exe"],c:2},
+{q:"تحويل المستندات الورقية إلى رقمية يتم باستخدام:",o:["الكاميرا","الماسح الضوئي","الشاشة","السماعة"],c:1},
+{q:"وحدة التخزين الثانوية هي:",o:["RAM","Cache","ROM","Hard Disk"],c:3},
+{q:"جهاز متصل بالكمبيوتر وليس جزءًا منه:",o:["المعالج","اللوحة الأم","الرام","الطابعة"],c:3},
+
+/* ===== الشبكات ===== */
+{q:"الشبكة التي تُستخدم داخل مؤسسة واحدة:",o:["WAN","MAN","LAN","Internet"],c:2},
+{q:"الشبكة التي تتصل فيها الأجهزة على شكل حلقة:",o:["Star","Bus","Ring","Tree"],c:2},
+{q:"الجهاز المسؤول عن ربط شبكتين مختلفتين:",o:["Hub","Switch","Router","Repeater"],c:2},
+{q:"الشبكة واسعة النطاق:",o:["LAN","PAN","WAN","MAN"],c:2},
+{q:"Topology تعتمد على جهاز مركزي:",o:["Ring","Bus","Star","Mesh"],c:2},
+{q:"الجهاز الذي يوجه البيانات بين الشبكات:",o:["Switch","Router","Hub","Bridge"],c:1},
+{q:"الشبكة التي تعتمد على كابل رئيسي واحد:",o:["Star","Ring","Bus","Mesh"],c:2},
+{q:"الإنترنت مثال على:",o:["LAN","MAN","WAN","PAN"],c:2},
+{q:"الجهاز الذي يربط أجهزة الشبكة المحلية:",o:["Router","Modem","Switch","Firewall"],c:2},
+{q:"الشبكة الشخصية قصيرة المدى:",o:["LAN","WAN","PAN","MAN"],c:2},
+
+/* ===== HTML ===== */
+{q:"جميع أوامر HTML تُكتب داخل:",o:["()","{}","<>","[]"],c:2},
+{q:"الوسم المستخدم لإنشاء سطر جديد:",o:["<p>","<br>","<hr>","<div>"],c:1},
+{q:"الوسم <ul> يُستخدم لإنشاء:",o:["قائمة مرتبة","قائمة غير مرتبة","جدول","فقرة"],c:1},
+{q:"الخاصية المسؤولة عن لون النص:",o:["background","font","color","text"],c:2},
+{q:"امتداد ملف HTML:",o:[".css",".js",".html",".exe"],c:2},
+{q:"الوسم المستخدم لإدراج صورة:",o:["<img>","<src>","<pic>","<image>"],c:0},
+{q:"الوسم المستخدم لإنشاء رابط:",o:["<a>","<link>","<href>","<url>"],c:0},
+{q:"أكبر حجم عنوان في HTML:",o:["<h6>","<h4>","<h2>","<h1>"],c:3},
+{q:"HTML هي لغة:",o:["برمجة","قواعد بيانات","تنسيق","توصيف صفحات الويب"],c:3},
+{q:"HTML لا تحتاج إلى:",o:["مترجم","متصفح","وسوم","نص"],c:0},
+
+/* ===== الألوان ===== */
+{q:"كود اللون الأسود:",o:["#FFFFFF","#FF0000","#000000","#00FF00"],c:2},
+{q:"كود اللون الأحمر:",o:["#00FF00","#0000FF","#FF0000","#FFFF00"],c:2},
+{q:"اللون الأبيض:",o:["#FFF","#EEE","#FFFFFF","#000"],c:2},
+{q:"RGB يتكون من:",o:["قيمتين","ثلاث قيم","أربع قيم","قيمة واحدة"],c:1},
+{q:"اللون #0000FF يدل على:",o:["أحمر","أخضر","أزرق","أسود"],c:2},
+
+/* ===== Visual Basic ===== */
+{q:"تعريف متغير في Visual Basic يتم باستخدام:",o:["var","let","Dim","define"],c:2},
+{q:"تحديد نوع البيانات في VB يتم باستخدام:",o:["Is","Set","As","Type"],c:2},
+{q:"السطر الجديد في VB:",o:["\\n","Enter","vbCrLf","NewLine"],c:2},
+{q:"تعريف الثوابت في VB يتم باستخدام:",o:["Dim","Static","Let","Const"],c:3},
+{q:"نوع البيانات المناسب للأرقام العشرية:",o:["Integer","String","Boolean","Single"],c:3},
+/* ===== الأمن السيبراني ===== */
+{q:"الهجوم الذي يستهدف سرقة كلمات المرور:",o:["Phishing","DDoS","Spoofing","Malware"],c:0},
+{q:"Antivirus مهم ل:",o:["تخزين الملفات","حماية الجهاز من الفيروسات","زيادة سرعة المعالج","تعديل ملفات النظام"],c:1},
+{q:"الهندسة الاجتماعية تعتمد على:",o:["برامج","استغلال ثغرات بشرية","شبكات","الأجهزة"],c:1},
+{q:"تشفير البيانات باستخدام مفتاح واحد يسمى:",o:["Symmetric","Asymmetric","Hashing","RSA"],c:0},
+{q:"Firewall يمنع:",o:["الهجمات","النسخ","الإرسال","الطباعة"],c:0},
+
+/* ===== قواعد البيانات ===== */
+{q:"لغة SQL تُستخدم لـ:",o:["برمجة المواقع","إدارة قواعد البيانات","إدارة الملفات","تصميم واجهات"],c:1},
+{q:"العمود PRIMARY KEY يجب أن:",o:["يكون فريد","يكون نصي","يكون فارغ","يقبل التكرار"],c:0},
+{q:"عمليات CRUD تعني:",o:["إنشاء، قراءة، تحديث، حذف","إنشاء، حذف، نسخ، لصق","بحث، تعديل، طباعة، حذف","إنشاء، تعديل، نقل، حذف"],c:0},
+{q:"لإضافة سجل جديد في SQL نستخدم:",o:["INSERT","ADD","UPDATE","CREATE"],c:0},
+{q:"للحصول على كل البيانات من جدول:",o:["SELECT * FROM table","GET * FROM table","SHOW * FROM table","DISPLAY * FROM table"],c:0}
+
+];
+
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correctIndex=questions[current].c;
+    let correctText=questions[current].o[correctIndex];
+
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correctIndex){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correctIndex].classList.add("correct");
+
+        let msg=document.getElementById("correctAnswer");
+        msg.innerHTML="✅ الإجابة الصحيحة: <b>"+correctText+"</b>";
+        msg.style.display="block";
+    }
+
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        document.querySelector(".card").innerHTML=
+        `<div class="result">
+        انتهى الاختبار ✅<br><br>
+        الدرجة النهائية: ${score} من ${questions.length}
+        </div>`;
+    }
+}
+
+/* التايمر */
+let time=30*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

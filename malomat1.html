@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار المعلومات العامة</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+.container{padding:15px;}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+}
+.option.correct{background:#4CAF50;color:#fff}
+.option.wrong{background:#E53935;color:#fff}
+.option.disabled{pointer-events:none}
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{opacity:1;pointer-events:auto}
+
+/* ===== Scoreboard ===== */
+.scoreboard{
+    text-align:center;
+    padding:25px;
+}
+.score{
+    font-size:26px;
+    color:#0D47A1;
+    margin-bottom:10px;
+}
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+.progress-bar{
+    height:18px;
+    background:#4CAF50;
+    width:0%;
+}
+.grade{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:15px;
+}
+.good{color:#2E7D32}
+.mid{color:#F9A825}
+.bad{color:#E53935}
+
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">اختبار المعلومات العامة</div>
+
+<div class="top-info">
+    <div id="timer">40:00</div>
+    <div id="counter">1 / 100</div>
+</div>
+
+<div class="container">
+    <div class="card" id="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+
+{q:"في أي عام تم إنشاء المجلس الوطني للمرأة؟", o:["2010","2015","2017","2020"], c:2},
+{q:"أسرع حيوان بري في العالم هو:", o:["الفهد","الأسد","الغزال","الحصان"], c:0},
+{q:"أكبر محيط في العالم هو:", o:["الأطلسي","الهندي","الهادئ","القطبي"], c:2},
+{q:"أيهما يمتلك أطول عمر افتراضي؟", o:["التمساح","السلحفاة العملاقة","الفيل","الحصان"], c:1},
+
+{q:"أين تقع مدينة تونة الجبل؟", o:["المنيا","سوهاج","بني سويف","قنا"], c:0},
+
+{q:"أكبر صحراء في العالم هي:", o:["الصحراوية الكبرى","ساحل ناميب","الصحراوية الكبرى","صحراء جوبي"], c:0},
+{q:"كم عدد الكواكب في المجموعة الشمسية؟", o:["8","9","7","10"], c:0},
+{q:"أكبر دولة في العالم من حيث المساحة هي:", o:["الصين","روسيا","الولايات المتحدة","كندا"], c:1},
+{q:"أطول نهر في العالم هو:", o:["الأمازون","النيلي","اليانغتسي","الميسيسيبي"], c:1},
+{q:"أسرع طائر في العالم هو:", o:["الصقر","النسور","الحمامة","الغراب"], c:0},
+{q:"ما هو أكبر كوكب في المجموعة الشمسية؟", o:["الأرض","المريخ","المشتري","الزهرة"], c:2},
+{q:"ما هو أصغر قارة من حيث المساحة؟", o:["أستراليا","أوروبا","أمريكا الجنوبية","أفريقيا"], c:0},
+{q:"ما هو الحيوان الوطني لمصر؟", o:["النسر","الفهد","الأسد","الصقر"], c:3},
+{q:"أكبر محيطات العالم حسب الحجم:", o:["الهندي","الأطلسي","الهادئ","القطبي"], c:2},
+{q:"أيهما أطول مدة حياة:", o:["الأسد","التمساح","السلحفاة","الفيل"], c:2},
+{q:"أكبر بحيرة في العالم:", o:["بحيرة فيكتوريا","بحيرة سوبيريور","بحيرة ميشيغان","بحيرة بايكال"], c:1},
+{q:"أكثر دولة تعداداً سكانياً:", o:["الهند","الصين","الولايات المتحدة","إندونيسيا"], c:1},
+{q:"أكبر دولة عربية مساحة:", o:["السعودية","الجزائر","ليبيا","مصر"], c:1},
+{q:"أعمق نقطة في المحيطات:", o:["خندق ماريانا","خندق بليز","خندق تندران","خندق جافا"], c:0},
+{q:"أكبر صحراء رملية في العالم:", o:["الصحراوية الكبرى","الصحراء العربية","صحراء جوبي","صحراء ناميب"], c:0},
+{q:"أطول سور في العالم:", o:["سور الصين العظيم","سور القلعة","سور روديس","سور هان"], c:0},
+{q:"أعلى قمة جبلية في العالم:", o:["إيفرست","كيلمنجارو","كينيا","أكونكاجوا"], c:0},
+{q:"ما هو أكبر حيوان بري:", o:["الفيل الأفريقي","الوحيد القرن","التمساح","الزرافة"], c:0},
+{q:"أكبر دولة إفريقية:", o:["نيجيريا","الجزائر","مصر","السودان"], c:1},
+{q:"أول رئيس لمصر بعد الثورة 1952:", o:["جمال عبد الناصر","محمد نجيب","أنور السادات","حسني مبارك"], c:1},
+{q:"أول قمر صناعي مصري:", o:["إيجيبتسات 1","نايلسات 101","إيجيبت سات A","نايلسات 201"], c:0},
+{q:"أشهر هرم في مصر:", o:["هرم خوفو","هرم خفرع","هرم منقرع","الهرم الأحمر"], c:0},
+{q:"أكبر بحيرة عذبة في إفريقيا:", o:["فيكتوريا","تنجانيقا","النيجر","تشاد"], c:0},
+{q:"أكبر نهر إفريقي:", o:["النيل","الكونغو","الزامبيزي","النيجر"], c:0},
+{q:"أكبر جزيرة في العالم:", o:["مدغشقر","غرينلاند","بوها","بورنيو"], c:1},
+{q:"أعلى شلال في العالم:", o:["أنجل","نياغرا","إيجوازو","وكتوريا"], c:0},
+{q:"أسرع حيوان بحري:", o:["الدلفين","القرش","الأخطبوط","السمك الطائر"], c:1},
+{q:"أطول نهر في إفريقيا:", o:["النيل","الكونغو","الزامبيزي","النيجر"], c:0},
+{q:"أكبر دولة في قارة أمريكا الجنوبية:", o:["البرازيل","الأرجنتين","تشيلي","بيرو"], c:0},
+{q:"أكثر دولة عربية سكاناً:", o:["مصر","السعودية","الجزائر","العراق"], c:0},
+{q:"أكبر مدينة في مصر:", o:["الإسكندرية","القاهرة","الجيزة","السويس"], c:1},
+{q:"أطول نهر في آسيا:", o:["النهر الأصفر","اليانغتسي","الغانج","الليتا"], c:1},
+{q:"أعلى قمة في إفريقيا:", o:["كيلمنجارو","إيفرست","الكونغو","أكري"], c:0},
+{q:"أكثر الدول العربية انتاجاً للنفط:", o:["السعودية","العراق","الإمارات","الكويت"], c:0},
+{q:"أكبر بحر مغلق في العالم:", o:["الشنغهاي","البحر الأبيض المتوسط","بحر قزوين","البحر الأحمر"], c:2},
+{q:"أسرع طائر جارح:", o:["الصقر","النسر","النساج","الغراب"], c:0},
+{q:"أكثر دولة استهلاكاً للقهوة:", o:["إثيوبيا","الولايات المتحدة","فنلندا","البرازيل"], c:2},
+{q:"أكبر صحراء باردة:", o:["جوبى","قطبى","ناميب","ساحل ألاسكا"], c:1},
+{q:"أول دولة أرسلت إنسان للفضاء:", o:["روسيا","أمريكا","الصين","اليابان"], c:0},
+{q:"أعلى برج في العالم:", o:["برج خليفة","برج إيفل","برج شارد","برج تايبيه 101"], c:0},
+{q:"أطول جسر في العالم:", o:["جسر دانيانغ-كونشان","جسر جولدن جيت","جسر الملك فهد","جسر أكاشي"], c:0},
+{q:"أكبر محمية طبيعية في العالم:", o:["سيلفر ليك","أم قزاز","ليوبولد","سيرينجيتي"], c:3},
+{q:"أكثر دولة إنتاجاً للألماس:", o:["روسيا","جنوب أفريقيا","كندا","بوتسوانا"], c:1},
+{q:"أكثر دولة استهلاكاً للمياه:", o:["مصر","السعودية","الإمارات","الولايات المتحدة"], c:3},
+{q:"أكثر دولة سياحة في العالم:", o:["فرنسا","إسبانيا","الولايات المتحدة","الصين"], c:0}
+
+];
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correct=questions[current].c;
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correct){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correct].classList.add("correct");
+        document.getElementById("correctAnswer").innerHTML=
+        "✅ الإجابة الصحيحة: <b>"+questions[current].o[correct]+"</b>";
+        document.getElementById("correctAnswer").style.display="block";
+    }
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        showScoreboard();
+    }
+}
+
+function showScoreboard(){
+    let percent = Math.round((score/questions.length)*100);
+    let gradeText="", gradeClass="";
+
+    if(percent>=80){gradeText="ممتاز";gradeClass="good";}
+    else if(percent>=60){gradeText="جيد جدًا";gradeClass="mid";}
+    else{gradeText="يحتاج مراجعة";gradeClass="bad";}
+
+    document.getElementById("card").innerHTML=`
+    <div class="scoreboard">
+        <div class="score">درجتك: ${score} / ${questions.length}</div>
+        <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+        </div>
+        <div>النسبة المئوية: <b>${percent}%</b></div>
+        <div class="grade ${gradeClass}">التقييم: ${gradeText}</div>
+    </div>`;
+}
+
+/* Timer */
+let time=40*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

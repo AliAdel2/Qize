@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار التربوى</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+.container{padding:15px;}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+}
+.option.correct{background:#4CAF50;color:#fff}
+.option.wrong{background:#E53935;color:#fff}
+.option.disabled{pointer-events:none}
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{opacity:1;pointer-events:auto}
+
+/* ===== Scoreboard ===== */
+.scoreboard{
+    text-align:center;
+    padding:25px;
+}
+.score{
+    font-size:26px;
+    color:#0D47A1;
+    margin-bottom:10px;
+}
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+.progress-bar{
+    height:18px;
+    background:#4CAF50;
+    width:0%;
+}
+.grade{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:15px;
+}
+.good{color:#2E7D32}
+.mid{color:#F9A825}
+.bad{color:#E53935}
+
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">اختبار التربوى </div>
+
+<div class="top-info">
+    <div id="timer">40:00</div>
+    <div id="counter">1 / 100</div>
+</div>
+
+<div class="container">
+    <div class="card" id="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+/* ===== التربوي ===== */
+
+{q:"التربية في مفهومها الشامل تهدف إلى:",o:["نقل المعرفة فقط","تنمية شخصية الفرد المتكاملة","ضبط السلوك","إعداد الطالب للامتحان"],c:1},
+
+{q:"التعليم عملية تهدف أساسًا إلى:",o:["الحفظ","التلقين","إحداث تعلم وتغيير في السلوك","إنهاء المنهج"],c:2},
+
+{q:"أي مما يلي يُعد من أهداف التربية الحديثة؟",o:["تنمية التفكير الناقد","زيادة الواجبات","الاعتماد على الحفظ","تقليل دور الطالب"],c:0},
+
+{q:"الفروق الفردية بين الطلاب تعني:",o:["اختلافهم في الملابس","اختلافهم في الذكاء والقدرات","اختلاف المدارس","تشابههم في المستوى"],c:1},
+
+{q:"أفضل أسلوب لمراعاة الفروق الفردية:",o:["طريقة واحدة للجميع","تنويع طرق التدريس","العقاب","التجاهل"],c:1},
+
+{q:"المعلم الفعال هو الذي:",o:["يعتمد على الصرامة","يهتم بالمحتوى فقط","يشجع المشاركة والتفاعل","يكثر من العقاب"],c:2},
+
+{q:"التعلم النشط يعتمد على:",o:["دور المعلم فقط","دور الطالب فقط","مشاركة المعلم والطالب","الشرح فقط"],c:2},
+
+{q:"الدافعية للتعلم تعني:",o:["الخوف من الامتحان","الرغبة الداخلية في التعلم","الإجبار","العقاب"],c:1},
+
+{q:"زيادة الدافعية لدى الطالب تتحقق من خلال:",o:["التوبيخ","التهديد","التشجيع والتحفيز","العقاب البدني"],c:2},
+
+{q:"التقويم التربوي يهدف إلى:",o:["إعطاء درجات","تصنيف الطلاب","تحسين العملية التعليمية","إنهاء العام"],c:2},
+
+{q:"من أساليب التقويم التربوي:",o:["الاختبارات فقط","الملاحظة","المقابلة","جميع ما سبق"],c:3},
+
+{q:"إدارة الصف الجيدة تعتمد على:",o:["الصوت العالي","العقاب","التنظيم والتفاعل","التجاهل"],c:2},
+
+{q:"أفضل تصرف مع طالب مشاغب:",o:["طرده","السخرية منه","فهم أسباب سلوكه","تجاهله"],c:2},
+
+{q:"البيئة الصفية الجيدة تساعد على:",o:["زيادة القلق","ضعف التحصيل","تحسين التعلم","الفوضى"],c:2},
+
+{q:"التعلم يكون أكثر فاعلية عندما:",o:["يعتمد على الحفظ","يرتبط بخبرات المتعلم","يكون قسريًا","يخلو من الأهداف"],c:1},
+
+{q:"من خصائص المعلم الجيد:",o:["التحكم فقط","المرونة","التسلط","الانفعال"],c:1},
+
+{q:"الأسلوب الديمقراطي في التدريس يتميز بـ:",o:["إلغاء دور الطالب","المشاركة والحوار","الصرامة","التلقين"],c:1},
+
+{q:"القياس في التربية يعني:",o:["إصدار حكم","جمع معلومات رقمية","العقاب","التقويم"],c:1},
+
+{q:"التقويم يختلف عن القياس لأنه:",o:["يعتمد على الأرقام","يصدر حكمًا","أقل أهمية","لا يستخدم أدوات"],c:1},
+
+{q:"المنهج الحديث يركز على:",o:["المحتوى فقط","الكتاب المدرسي","المتعلم","الامتحان"],c:2},
+
+{q:"من وظائف المدرسة:",o:["التعليم فقط","التنشئة الاجتماعية","العقاب","الامتحان"],c:1},
+
+{q:"التنشئة الاجتماعية تعني:",o:["نقل القيم","الحفظ","التلقين","العقاب"],c:0},
+
+{q:"العلاقة بين المدرسة والأسرة يجب أن تكون:",o:["منفصلة","تنافسية","تعاونية","شكلية"],c:2},
+
+{q:"أفضل أسلوب لتعزيز السلوك الإيجابي:",o:["العقاب","التجاهل","التعزيز الإيجابي","التهديد"],c:2},
+
+{q:"من مبادئ التعلم:",o:["التدرج","الصدفة","العشوائية","الإجبار"],c:0},
+
+{q:"التعلم الذاتي يعتمد على:",o:["المعلم","الطالب","الإدارة","المنهج"],c:1},
+
+{q:"من عوامل نجاح التعلم:",o:["الملل","الدافعية","العقاب","التوتر"],c:1},
+
+{q:"الأسئلة الصفية الجيدة يجب أن تكون:",o:["غامضة","مغلقة دائمًا","واضحة ومتدرجة","صعبة فقط"],c:2},
+
+{q:"التعلم التعاوني يعتمد على:",o:["الفردية","التنافس","العمل الجماعي","الحفظ"],c:2},
+
+{q:"من خصائص النمو:",o:["ثابت","سريع فقط","مستمر","متوقف"],c:2},
+
+{q:"النمو العقلي يتأثر بـ:",o:["الوراثة فقط","البيئة فقط","الوراثة والبيئة","المدرسة فقط"],c:2},
+
+{q:"من أهداف التقويم المستمر:",o:["إرهاق الطالب","تحسين الأداء","زيادة القلق","التهديد"],c:1},
+
+{q:"الاختبارات التحصيلية تقيس:",o:["الشخصية","الذكاء","ما تعلمه الطالب","السلوك"],c:2},
+
+{q:"من خصائص الاختبار الجيد:",o:["التحيز","الصدق والثبات","الطول","الصعوبة فقط"],c:1},
+
+{q:"التعليم الفعال يركز على:",o:["المعلم","الكتاب","المتعلم","الامتحان"],c:2},
+
+{q:"الطالب الإيجابي هو الذي:",o:["يحفظ فقط","يشارك ويتفاعل","يصمت","يعتمد على المعلم"],c:1},
+
+{q:"من أساليب التدريس الحديثة:",o:["الإلقاء","المناقشة","التلقين","الحفظ"],c:1},
+
+{q:"التعليم القائم على المشكلات يهدف إلى:",o:["الحفظ","تنمية التفكير","السرعة","الكم"],c:1},
+
+{q:"أفضل وسيلة لتعديل السلوك:",o:["العقاب البدني","التعزيز","الحرمان","التوبيخ"],c:1},
+
+{q:"التعلم يحدث عندما:",o:["يحفظ الطالب","يتغير السلوك","ينتهي الدرس","يحضر الطالب"],c:1},
+
+{q:"من مهام المعلم:",o:["الشرح فقط","التوجيه والإرشاد","العقاب","التلقين"],c:1},
+
+{q:"الانضباط الصفي الحقيقي يعتمد على:",o:["الخوف","العقاب","الاحترام المتبادل","الصوت العالي"],c:2},
+
+{q:"المنهج الخفي يشير إلى:",o:["الكتاب","القيم والسلوكيات المكتسبة","الامتحان","الحصص"],c:1},
+
+{q:"التربية الأخلاقية تهدف إلى:",o:["الحفظ","غرس القيم","العقاب","التلقين"],c:1},
+
+{q:"التعلم مدى الحياة يعني:",o:["ينتهي بالتخرج","مستمر طوال العمر","مؤقت","مدرسي فقط"],c:1},
+
+{q:"التعلم القائم على المشكلات ينمي:",o:["الحفظ","التفكير","الملل","الخوف"],c:1},
+
+{q:"المعلم قدوة عندما:",o:["يكثر العقاب","يلتزم بالقيم","يتجاهل الطلاب","يركز على الدرجات"],c:1},
+
+{q:"أفضل طريقة لغرس القيم:",o:["الوعظ فقط","الممارسة","العقاب","التهديد"],c:1},
+
+{q:"التربية الحديثة تركز على:",o:["الامتحان","الطالب","المحتوى","الحفظ"],c:1},
+
+{q:"التعلم مدى الحياة يعني:",o:["التعلم المدرسي فقط","الاستمرار في التعلم","التوقف بعد التخرج","الحفظ"],c:1}
+
+
+];
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correct=questions[current].c;
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correct){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correct].classList.add("correct");
+        document.getElementById("correctAnswer").innerHTML=
+        "✅ الإجابة الصحيحة: <b>"+questions[current].o[correct]+"</b>";
+        document.getElementById("correctAnswer").style.display="block";
+    }
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        showScoreboard();
+    }
+}
+
+function showScoreboard(){
+    let percent = Math.round((score/questions.length)*100);
+    let gradeText="", gradeClass="";
+
+    if(percent>=80){gradeText="ممتاز";gradeClass="good";}
+    else if(percent>=60){gradeText="جيد جدًا";gradeClass="mid";}
+    else{gradeText="يحتاج مراجعة";gradeClass="bad";}
+
+    document.getElementById("card").innerHTML=`
+    <div class="scoreboard">
+        <div class="score">درجتك: ${score} / ${questions.length}</div>
+        <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+        </div>
+        <div>النسبة المئوية: <b>${percent}%</b></div>
+        <div class="grade ${gradeClass}">التقييم: ${gradeText}</div>
+    </div>`;
+}
+
+/* Timer */
+let time=40*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

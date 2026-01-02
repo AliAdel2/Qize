@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار التربوى</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+.container{padding:15px;}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+}
+.option.correct{background:#4CAF50;color:#fff}
+.option.wrong{background:#E53935;color:#fff}
+.option.disabled{pointer-events:none}
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{opacity:1;pointer-events:auto}
+
+/* ===== Scoreboard ===== */
+.scoreboard{
+    text-align:center;
+    padding:25px;
+}
+.score{
+    font-size:26px;
+    color:#0D47A1;
+    margin-bottom:10px;
+}
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+.progress-bar{
+    height:18px;
+    background:#4CAF50;
+    width:0%;
+}
+.grade{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:15px;
+}
+.good{color:#2E7D32}
+.mid{color:#F9A825}
+.bad{color:#E53935}
+
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">اختبار التربوى</div>
+
+<div class="top-info">
+    <div id="timer">40:00</div>
+    <div id="counter">1 / 100</div>
+</div>
+
+<div class="container">
+    <div class="card" id="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+/* ===== التربوي – متداول ===== */
+
+{q:"طالب يعاني من ضعف التحصيل رغم ذكائه الجيد، أنسب إجراء:",o:["عقابه","زيادة الواجبات","تشخيص أسباب الضعف","تجاهله"],c:2},
+
+{q:"التعلم القائم على المشروعات يهدف إلى:",o:["الحفظ","التلقين","الربط بين التعلم والحياة","السرعة"],c:2},
+
+{q:"من خصائص مرحلة المراهقة:",o:["الاستقرار الانفعالي","التغيرات السريعة","الاعتماد الكامل على الأسرة","ضعف التفكير"],c:1},
+
+{q:"أفضل أسلوب لتقويم مهارات التفكير:",o:["الاختبارات المقالية","الأسئلة الموضوعية","الملاحظة والمشروعات","الحفظ"],c:2},
+
+{q:"الموقف التعليمي الجيد يبدأ بـ:",o:["الشرح","التقويم","التهيئة","العقاب"],c:2},
+
+{q:"الطالب الذي يغش غالبًا يعاني من:",o:["الذكاء المرتفع","ضعف الثقة بالنفس","حب التعلم","الاجتهاد"],c:1},
+
+{q:"التعليم الإلكتروني يتميز بـ:",o:["الجمود","التفاعل","العزلة","التلقين"],c:1},
+
+{q:"من أهداف الأنشطة المدرسية:",o:["إضاعة الوقت","تنمية الميول","تقليل التحصيل","العقاب"],c:1},
+
+{q:"التعلم يكون أكثر ثباتًا عندما:",o:["يعتمد على الحفظ","يقترن بالتطبيق","يكون سريعًا","يكون فرديًا"],c:1},
+
+{q:"أفضل أسلوب للتعامل مع الفروق الفردية:",o:["إلغاء الفروق","تنويع الأنشطة","التجاهل","العقاب"],c:1},
+
+{q:"المعلم الذي يستخدم التعزيز الإيجابي يهدف إلى:",o:["إضعاف السلوك","تكرار السلوك الجيد","العقاب","السيطرة"],c:1},
+
+{q:"المنهج القائم على الكفايات يركز على:",o:["المعلومات","الكتاب","المهارات","الامتحان"],c:2},
+
+{q:"التقويم البنائي يتم:",o:["في نهاية العام","أثناء التعلم","بعد الامتحان","قبل الدرس"],c:1},
+
+{q:"التعلم التعاوني يساعد على:",o:["الاعتماد على الذات فقط","تنمية مهارات التواصل","العزلة","التنافس السلبي"],c:1},
+
+{q:"أفضل تصرف مع طالب خجول:",o:["إجباره على المشاركة","تشجيعه تدريجيًا","السخرية منه","تجاهله"],c:1},
+
+{q:"التعلم بالاكتشاف يعتمد على:",o:["الشرح المباشر","دور الطالب النشط","الحفظ","التلقين"],c:1},
+
+{q:"من صفات الاختبار الجيد:",o:["الطول","الوضوح","الصعوبة فقط","التكرار"],c:1},
+
+{q:"العلاقة الإيجابية بين المعلم والطلاب تؤدي إلى:",o:["ضعف الانضباط","زيادة التحصيل","الفوضى","التسيب"],c:1},
+
+{q:"القيادة الصفية الناجحة تعتمد على:",o:["الخوف","العقاب","الاحترام","الصوت العالي"],c:2},
+
+{q:"من أهداف التربية الأخلاقية:",o:["النجاح الدراسي فقط","غرس القيم","السرعة","الحفظ"],c:1},
+
+{q:"الطالب الذي ينسحب من الأنشطة غالبًا يعاني من:",o:["الثقة بالنفس","الخجل","القيادة","الذكاء"],c:1},
+
+{q:"التعلم الذاتي يساعد على:",o:["الاعتماد على المعلم","تنمية الاستقلالية","التلقين","الملل"],c:1},
+
+{q:"الوسيلة التعليمية الجيدة يجب أن تكون:",o:["معقدة","واضحة","باهظة","نادرة"],c:1},
+
+{q:"التعليم القائم على الحوار يهدف إلى:",o:["الحفظ","تنمية التفكير","السرعة","التلقين"],c:1},
+
+{q:"من أسباب المشكلات السلوكية:",o:["البيئة الأسرية","الوراثة فقط","المدرسة فقط","الذكاء"],c:0},
+
+{q:"أفضل أسلوب لتعديل السلوك الخاطئ:",o:["العقاب البدني","التعزيز الإيجابي","الحرمان","التوبيخ"],c:1},
+
+{q:"التقويم الختامي يتم:",o:["أثناء الدرس","في نهاية البرنامج","قبل التدريس","خلال النشاط"],c:1},
+
+{q:"التعلم يحدث بشكل أفضل عندما يكون:",o:["قسريًا","ناتجًا عن رغبة","سريعًا","مؤقتًا"],c:1},
+
+{q:"من خصائص المنهج الحديث:",o:["الجمود","المرونة","التركيز على الحفظ","الإهمال"],c:1},
+
+{q:"المعلم الناجح هو الذي:",o:["يشرح فقط","يحفز طلابه","يعاقب كثيرًا","يتجاهل"],c:1},
+
+{q:"التعلم القائم على اللعب يناسب مرحلة:",o:["الجامعة","الطفولة","الكبار","المراهقة المتأخرة"],c:1},
+
+{q:"الطالب الذي يقاطع زملاءه يحتاج إلى:",o:["عقاب","توجيه سلوكي","تجاهل","سخرية"],c:1},
+
+{q:"التقويم المستمر يهدف إلى:",o:["إرهاق الطالب","تحسين الأداء","التصنيف","العقاب"],c:1},
+
+{q:"من وظائف التقويم:",o:["العقاب","التشخيص","التهديد","التجاهل"],c:1},
+
+{q:"التعلم النشط يقلل من:",o:["الملل","الفهم","المشاركة","الدافعية"],c:0},
+
+{q:"المنهج الخفي يظهر في:",o:["الكتاب","سلوك المعلم","الامتحان","الجدول"],c:1},
+
+{q:"أفضل أسلوب لزيادة انتباه الطلاب:",o:["الصوت العالي","تنويع الأنشطة","العقاب","الإجبار"],c:1},
+
+{q:"البيئة الصفية الآمنة تساعد على:",o:["القلق","الخوف","التعلم","الفوضى"],c:2},
+
+{q:"التعليم الفعال يعتمد على:",o:["المعلم فقط","الطالب فقط","التفاعل","الكتاب"],c:2},
+
+{q:"الطالب الذي يسأل كثيرًا يدل على:",o:["الضعف","الفضول","الكسل","التشتت"],c:1},
+
+{q:"من أساليب التعلم الحديثة:",o:["التلقين","التعلم المقلوب","الحفظ","الإملاء"],c:1},
+{q:"طالب لا يتقبل النقد:",o:["السخرية","التجاهل","تقديم النقد البناء","العقاب"],c:2},
+
+{q:"طالب ينسحب من التفاعل الصفي:",o:["إهماله","السخرية","دمجه تدريجيًا","إجباره"],c:2},
+
+{q:"طالب يعاني من ضعف التركيز:",o:["الصراخ","العقاب","تقسيم المهام","التجاهل"],c:2},
+
+{q:"طالب لا يلتزم بتعليمات المعلم:",o:["العقاب","الصراخ","توضيح التوقعات","السخرية"],c:2},
+
+{q:"طالب يشعر بعدم العدالة:",o:["تجاهله","السخرية","الاستماع له وتوضيح الموقف","العقاب"],c:2},
+
+{q:"طالب يتأثر بسهولة بآراء الآخرين:",o:["إهماله","السخرية","تنمية شخصيته","العقاب"],c:2},
+
+{q:"طالب لديه طاقة قيادية سلبية:",o:["قمعه","تجاهله","توجيهها إيجابيًا","العقاب"],c:2},
+
+{q:"طالب يفتقد مهارات التواصل:",o:["السخرية","التجاهل","تنمية مهاراته تدريجيًا","العقاب"],c:2},
+
+{q:"طالب يكرر نفس الخطأ:",o:["العقاب المتكرر","التجاهل","تحليل السبب وعلاجه","السخرية"],c:2}
+];
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correct=questions[current].c;
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correct){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correct].classList.add("correct");
+        document.getElementById("correctAnswer").innerHTML=
+        "✅ الإجابة الصحيحة: <b>"+questions[current].o[correct]+"</b>";
+        document.getElementById("correctAnswer").style.display="block";
+    }
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        showScoreboard();
+    }
+}
+
+function showScoreboard(){
+    let percent = Math.round((score/questions.length)*100);
+    let gradeText="", gradeClass="";
+
+    if(percent>=80){gradeText="ممتاز";gradeClass="good";}
+    else if(percent>=60){gradeText="جيد جدًا";gradeClass="mid";}
+    else{gradeText="يحتاج مراجعة";gradeClass="bad";}
+
+    document.getElementById("card").innerHTML=`
+    <div class="scoreboard">
+        <div class="score">درجتك: ${score} / ${questions.length}</div>
+        <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+        </div>
+        <div>النسبة المئوية: <b>${percent}%</b></div>
+        <div class="grade ${gradeClass}">التقييم: ${gradeText}</div>
+    </div>`;
+}
+
+/* Timer */
+let time=40*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

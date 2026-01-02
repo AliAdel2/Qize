@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار الحاسب الآلي - الجهاز المركزي</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+
+/* الهيدر */
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+
+/* شريط علوي */
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+
+/* الكارت */
+.container{
+    padding:15px;
+}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+
+/* السؤال */
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+
+/* الاختيارات */
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+    transition:.3s;
+}
+.option:hover{
+    background:#FFECB3;
+}
+.option.correct{
+    background:#4CAF50;
+    color:#fff;
+    border-color:#4CAF50;
+}
+.option.wrong{
+    background:#E53935;
+    color:#fff;
+    border-color:#E53935;
+}
+.option.disabled{
+    pointer-events:none;
+}
+
+/* رسالة الإجابة الصحيحة */
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+
+/* زر التالي */
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+/* النتيجة */
+.result{
+    text-align:center;
+    font-size:21px;
+    padding:30px;
+    color:#0D47A1;
+}
+
+/* موبايل */
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+اختبار الحاسب الآلي  
+<br>
+
+</div>
+
+<div class="top-info">
+    <div id="timer">30:00</div>
+    <div id="counter">1 / 50</div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+
+
+/* ===== شبكات متقدمة ===== */
+{q:"بروتوكول TCP يُستخدم لضمان:",o:["سلاسة النقل","سرعة التوصيل","موثوقية الاتصال","تصغير الباقة"],c:2},
+{q:"الـ Subnet Mask في IPv4 يحدد:",o:["عدد الأجهزة","عنوان الشبكة","البروتوكول المستخدم","سرعة الشبكة"],c:1},
+{q:"الطبقة التي توفر التشفير في OSI هي:",o:["Network","Presentation","Transport","Session"],c:1},
+{q:"DNS يستخدم لتحويل:",o:["اسم الجهاز إلى عنوان MAC","اسم الموقع إلى IP","IP إلى MAC","بروتوكول إلى رقم"],c:1},
+{q:"ARP Protocol يخدم في طبقة:",o:["Application","Network","Data Link","Physical"],c:2},
+{q:"الأجهزة ذات الصلاحية لتقسيم الشبكة إلى VLAN:",o:["Hub","Router","Switch Layer 3","Repeater"],c:2},
+{q:"DHCP يقوم بتوزيع:",o:["DNS","IP Address","Subnet Mask","Gateway"],c:1},
+{q:"ما وظيفة Port في الشبكات؟",o:["حساب السرعة","تحديد نوع الخدمة","أماكن التخزين","تعديل عنوان IP"],c:1},
+{q:"ARP Cache يحتوي على:",o:["IP-MAC Mapping","MAC-Port Binding","Hostnames","Subnet Masks"],c:0},
+{q:"VoIP يعتمد بشكل أساسي على:",o:["UDP","TCP","ICMP","ARP"],c:0},
+
+/* ===== HTML + HTML5 ===== */
+{q:"HTML5 قدمت وسمًا لعرض:",o:["جداول","أشرطة تمرير","فيديو وصوت","أيقونات"],c:2},
+{q:"لتعريف عدد الأعمدة في الجدول نستخدم:",o:["colspan","rowspan","width","height"],c:0},
+{q:"الوسم <canvas> يُستخدم لـ:",o:["رسم رسومات","إنشاء نص","تضمين صورة","روابط"],c:0},
+{q:"علامة required في HTML5 تُستخدم لـ:",o:["تنسيق النص","جعل الحقل إجباري","إخفاء الصور","تغيير لون الخلفية"],c:1},
+{q:"الوسم <fieldset> يستخدم لـ:",o:["تجميع عناصر النموذج","فصل النصوص","إنشاء جدول","إدراج صورة"],c:0},
+{q:"الوسم <legend> يُستخدم لعرض:",o:["عنوان النموذج","صورة","جدول","فيديو"],c:0},
+{q:"ميزة Local Storage في HTML5 تسمح بـ:",o:["تخزين دائم في المتصفح","تخزين مؤقت","تخزين على الخادم","تخزين في قاعدة البيانات"],c:0},
+{q:"Attribute placeholder في input يحدد:",o:["نص توضيحي داخل الحقل","قيمة نهائية","لون النص","حجم الحقل"],c:0},
+{q:"الوسم <nav> يستخدم لـ:",o:["التذييل","الترويسة","التنقل","النموذج"],c:2},
+{q:"الوسم <article> يستخدم لتمثيل:",o:["محتوى مستقل","نص صغير","رأس الصفحة","سطر جديد"],c:0},
+
+/* ===== CSS + ألوان ===== */
+{q:"خاصية z-index في CSS تتحكم في:",o:["الترتيب الرأسي","الطبقات فوق بعضها","الخط","الحدود"],c:1},
+{q:"خاصية display:flex تُستخدم لـ:",o:["تنسيق النص","تصميم شبكي","توزيع العناصر","إدراج صور"],c:2},
+{q:"خاصية justify-content تتحكم في:",o:["المسافة بين العناصر","لون الخلفية","حجم النص","تداخل العناصر"],c:0},
+{q:"اللون RGBA يسمح بـ:",o:["لون ثابت","شفافية","ظلال","تدرجات"],c:1},
+{q:"كود اللون الاسمي للأزرق الداكن:",o:["#00008B","#8B0000","#008B8B","#2F4F4F"],c:0},
+{q:"الفرق بين margin و padding هو:",o:["للانحراف X فقط","المسافة داخل العنصر وخارجه","الاتجاه فقط","اللون فقط"],c:1},
+{q:"Flex-direction: column يجعل العناصر:",o:["أفقيًا","رأسيًا","مقلوبًا","متحركًا"],c:1},
+{q:"الخاصية text-transform تُستخدم لـ:",o:["تحويل النص","لون الخلفية","حجم النص","المسافة بين الأسطر"],c:0},
+{q:"خاصية overflow:hidden تمنع:",o:["ظهور السكروول","تغيير حجم العنصر","تداخل العناصر","إدراج صور"],c:0},
+{q:"الخاصية border-radius تتحكم في:",o:["لون الحد","زاوية العنصر","تدوير الزوايا","حجم النص"],c:2},
+
+/* ===== Visual Basic + برمجة ===== */
+{q:"في VB، الدالة MsgBox تُستخدم ل:",o:["إظهار رسالة","إدخال نص","إغلاق النموذج","تعريف متغير"],c:0},
+{q:"Loop While تُستخدم لـ:",o:["تكرار حتى شرط صحيح","تكرار مع عدد معين","تكرار للأبد","تكرار مشروط بنفي"],c:0},
+{q:"Do...Loop Until يكرر حتى:",o:["يكون الشرط صحيح","يكون الشرط خطأ","الدالة تتوقف","النص يتغير"],c:0},
+{q:"Select Case بديل عن:",o:["If بسيط","If متعددة","Loop","Function"],c:1},
+{q:"الدالة CInt في VB لتحويل:",o:["نص إلى True/False","نص إلى رقم","رقم إلى نص","رقم إلى Boolean"],c:1},
+{q:"المتغير Boolean يخزن:",o:["True فقط","False فقط","True/False","نص"],c:2},
+{q:"Property Text في TextBox تُستخدم ل:",o:["إظهار النص","تغيير اللون","تعديل الحجم","عرض صورة"],c:0},
+{q:"ActiveX controls في VB تُستخدم ل:",o:["تصميم الواجهات","تنظيم الذاكرة","تشغيل النظام","تحميل الملفات"],c:0},
+{q:"الأداة Timer في VB تُستخدم ل:",o:["التأخير الزمني","تسجيل الأخطاء","إظهار الرسائل","نقل البيانات"],c:0},
+{q:"For Next تُستخدم عندما:",o:["عدد التكرار معلوم","عدد التكرار غير معلوم","دون شرط","دون تغيير"],c:0},
+
+/* ===== الأمن السيبراني ===== */
+{q:"الهجوم DDoS يستهدف:",o:["سرقة البيانات","شغل الخادم بإرسال طلبات كثيرة","اختراق البريد","إظهار رسائل خاطئة"],c:1},
+{q:"Phishing يعتمد على:",o:["فيروس فقط","خداع المستخدم","كسر التشفير","تغيير النظام"],c:1},
+{q:"Antivirus يقوم بـ:",o:["تسريع الجهاز","حذف البرمجيات الخبيثة","تغيير الصور","تنزيل الملفات"],c:1},
+{q:"Encryption هي عملية:",o:["تشفير البيانات","استخراج البيانات","نسخ البيانات","حذف البيانات"],c:0},
+{q:"Authentication تعني:",o:["تشفير","تحقق هوية المستخدم","نسخ","عرض فقط"],c:1},
+
+/* ===== قواعد بيانات ===== */
+{q:"SQL JOIN يستخدم لـ:",o:["دمج الجداول","حذف الجداول","ترتيب الصفوف","تغيير القيم"],c:0},
+{q:"العمود PRIMARY KEY يجب أن:",o:["يقبل التكرار","يكون فريدًا","يكون فارغًا","يقبل القيم النصية فقط"],c:1},
+{q:"لإظهار بيانات مختارة من الجدول نستخدم:",o:["INSERT","UPDATE","DELETE","SELECT"],c:3},
+{q:"UPDATE بدون WHERE يؤدي إلى:",o:["لا شيء","تعديل كل السجلات","حذف السجلات","إغلاق الجدول"],c:1},
+{q:"الاختيار GROUP BY يستخدم في:",o:["ترتيب النتائج","تجميع النتائج","حذف البيانات","إضافة البيانات"],c:1},
+
+/* ===== تقنيات حديثة ===== */
+{q:"AI اختصار لـ:",o:["Automatic Interface","Artificial Intelligence","Active Integration","Array Interaction"],c:1},
+{q:"Machine Learning هي جزء من:",o:["AI","HTML","VB","CSS"],c:0},
+{q:"Cloud Computing يعني:",o:["تشغيل البرامج محليًا","تشغيل وتخزين عبر الإنترنت","تخزين فقط","أمن فقط"],c:1},
+{q:"Internet of Things يشير إلى:",o:["شبكة داخلية فقط","أجهزة متصلة بالإنترنت","ألعاب فقط","روابط"],c:1},
+{q:"Blockchain يستخدم في:",o:["التخزين فقط","تحقق سلاسل الكتل","نظم التشغيل","على الويب فقط"],c:1},
+
+];
+
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correctIndex=questions[current].c;
+    let correctText=questions[current].o[correctIndex];
+
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correctIndex){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correctIndex].classList.add("correct");
+
+        let msg=document.getElementById("correctAnswer");
+        msg.innerHTML="✅ الإجابة الصحيحة: <b>"+correctText+"</b>";
+        msg.style.display="block";
+    }
+
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        document.querySelector(".card").innerHTML=
+        `<div class="result">
+        انتهى الاختبار ✅<br><br>
+        الدرجة النهائية: ${score} من ${questions.length}
+        </div>`;
+    }
+}
+
+/* التايمر */
+let time=30*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

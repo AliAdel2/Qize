@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار المعلومات العامة الجهاز المركزي</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+.container{
+    padding:15px;
+}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+    transition:.3s;
+}
+.option:hover{
+    background:#FFECB3;
+}
+.option.correct{
+    background:#4CAF50;
+    color:#fff;
+    border-color:#4CAF50;
+}
+.option.wrong{
+    background:#E53935;
+    color:#fff;
+    border-color:#E53935;
+}
+.option.disabled{
+    pointer-events:none;
+}
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{
+    opacity:1;
+    pointer-events:auto;
+}
+.result{
+    text-align:center;
+    font-size:21px;
+    padding:30px;
+    color:#0D47A1;
+}
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+اختبار المعلومات العامة  
+<br>
+</div>
+
+<div class="top-info">
+    <div id="timer">30:00</div>
+    <div id="counter">1 / 50</div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي</div>
+    </div>
+</div>
+
+<script>
+// أسئلة مع توزيع الإجابة الصحيحة في أماكن مختلفة
+
+const questions = [
+{q:"المجلس الوطني للهيدروجين الأخضر أنشئ عام:",o:["2020","2021","2022","2023"],c:2},
+{q:"الهيدروجين الأخضر يُستخدم في:",o:["توليد الكهرباء","السيارات الكهربائية","توليد الطاقة النظيفة","جميع ما سبق"],c:3},
+{q:"أول استراتيجية وطنية للملكية الفكرية كانت في:",o:["2020","2021","2022","2023"],c:2},
+{q:"محور محمد صديق المنشاوي افتتح عام:",o:["2022","2023","2024","2025"],c:2},
+{q:"كوبري النصر العائم يقع في:",o:["بور سعيد","القاهرة","الجيزة","الإسكندرية"],c:0},
+{q:"نسبة المرأة في مجلس النواب تقريبًا:",o:["14%","28%","35%","40%"],c:1},
+{q:"عام المرأة في مصر:",o:["2015","2017","2019","2020"],c:1},
+{q:"المبادرة الوطنية 'اثنين كفاية' أطلقت في:",o:["2016","2017","2018","2019"],c:2},
+{q:"وزارة مختصة بالإشراف على مبادرة حياة كريمة:",o:["التعليم","العدل","الشباب","الصحة"],c:1},
+{q:"محور جمال حمدان افتتح عام:",o:["2022","2023","2024","2025"],c:2},
+{q:"الهيدروجين الأخضر ينتج باستخدام:",o:["الغاز الطبيعي","الفحم","التحليل الكهربائي للماء","البترول"],c:2},
+{q:"تعداد سكاني يتم كل كم سنة؟",o:["5 سنوات","10 سنوات","15 سنة","20 سنة"],c:1},
+{q:"محافظة جرجا تقع في؟",o:["سوهاج","قنا","المنيا","أسيوط"],c:0},
+{q:"محافظة قرقاص تقع في؟",o:["المنيا","أسيوط","سوهاج","قنا"],c:0},
+{q:"وجه مدينة تونة الجبل تتبع محافظة؟",o:["المنيا","أسيوط","سوهاج","قنا"],c:0},
+{q:"تم إطلاق الاستراتيجية الوطنية للملكية الفكرية عام؟",o:["2020","2022","2024","2018"],c:1},
+{q:"نسبة المرأة في مجلس الشعب كانت؟",o:["14%","28%","35%","20%"],c:1},
+{q:"عام المرأة كان؟",o:["2017","2015","2016","2018"],c:0},
+{q:"محافظة تونة الجبل تتبع؟",o:["المنيا","أسيوط","سوهاج","قنا"],c:0},
+{q:"أين تقع الأهرامات الأكبر؟",o:["الجيزة","الأقصر","المنيا","أسوان"],c:0},
+{q:"أعلى جبل في العالم؟",o:["إيفرست","كينيا","أكونكاجوا","إلبروس"],c:0},
+{q:"أين تقع بحيرة بايكال؟",o:["روسيا","كندا","أمريكا","الصين"],c:0},
+{q:"أين يقع مضيق هرمز؟",o:["الخليج العربي","بحر العرب","المحيط الهندي","البحر الأحمر"],c:0},
+{q:"أكبر محيط في العالم؟",o:["المحيط الهادئ","المحيط الأطلسي","المحيط الهندي","المحيط المتجمد الجنوبي"],c:0},
+{q:"أين تقع جزر المالديف؟",o:["المحيط الهندي","المحيط الهادئ","المحيط الأطلسي","البحر الأحمر"],c:0},
+{q:"أين تقع مدينة البندقية؟",o:["إيطاليا","فرنسا","إسبانيا","سويسرا"],c:0},
+{q:"ما هي اللغة الرسمية في البرازيل؟",o:["البرتغالية","الإسبانية","الإنجليزية","الفرنسية"],c:0},
+{q:"أين يقع معبد الكرنك؟",o:["الأقصر","الجيزة","أسوان","المنيا"],c:0},
+{q:"أعلى شلال في العالم هو:",o:["أنجل","نياغارا","فيكتوريا","إيغوازو"],c:0},
+{q:"ما أسرع حيوان في العالم؟",o:["الفهد","النمر","الأسد","الغزال"],c:0},
+{q:"ما أطول نهر في إفريقيا؟",o:["النيل","الكونغو","الزامبيزي","النجران"],c:0},
+{q:"ما عاصمة فرنسا؟",o:["باريس","برلين","مدريد","روما"],c:0},
+{q:"أين توجد بحيرة تاهو؟",o:["أمريكا","كندا","سويسرا","أستراليا"],c:0},
+{q:"ما اسم أكبر كائن حي على كوكب الأرض؟",o:["الحوت الأزرق","الفيل","القرش","الحوت الأبيض"],c:0},
+{q:"أسرع وسيلة نقل تجاري؟",o:["الطائرة","القطار","السيارة","السفينة"],c:0},
+{q:"الحيوان الذي ينام معظم حياته؟",o:["الكسلان","التمساح","الأسد","الثعلب"],c:0},
+{q:"أين تقع أكبر صحراء في العالم؟",o:["الصحراء الكبرى","صحراء جوبي","صحراء كالاهاري","صحراء أتاكاما"],c:0},
+{q:"أين توجد هضبة التبت؟",o:["الصين","الهند","نيبال","بوتان"],c:0},
+{q:"أين تقع مدينة نيويورك؟",o:["الولايات المتحدة","كندا","أستراليا","بريطانيا"],c:0},
+{q:"أين يقع بركان فيزوف؟",o:["إيطاليا","اليونان","تركيا","فرنسا"],c:0},
+{q:"أين توجد جبال الألب؟",o:["أوروبا","آسيا","أمريكا","أفريقيا"],c:0},
+{q:"ما أكبر جزيرة في العالم؟",o:["غرينلاند","مدغشقر","أيسلندا","بوينت"],c:0},
+{q:"أين تقع مدينة كيب تاون؟",o:["جنوب أفريقيا","أستراليا","نيوزيلندا","المغرب"],c:0},
+{q:"أين يقع معبد أبو سمبل؟",o:["أسوان","الأقصر","الجيزة","المنيا"],c:0},
+{q:"أين يقع متحف اللوفر؟",o:["باريس","لندن","برلين","روما"],c:0},
+{q:"أين تقع قناة السويس؟",o:["مصر","اليمن","السعودية","ليبيا"],c:0},
+{q:"ما أسرع حيوان بري؟",o:["الفهد","الأسد","الغزال","النمر"],c:0},
+{q:"أين تقع العاصمة البريطانية؟",o:["لندن","أدنبرة","مانشستر","برمنجهام"],c:0},
+{q:"أين تقع مدينة طوكيو؟",o:["اليابان","الصين","كوريا الجنوبية","فيتنام"],c:0},
+{q:"أين تقع الأهرامات الصغيرة؟",o:["دهشور","الجيزة","المنيا","الفيوم"],c:0},
+{q:"ما اسم أطول جسر في العالم؟",o:["جسر الملك فهد","جسر ميلو","جسر غويانغ","جسر البوابة الذهبية"],c:0},
+{q:"أين تقع مدينة شيكاغو؟",o:["الولايات المتحدة","كندا","أستراليا","المكسيك"],c:0},
+{q:"ما هي أكبر دولة في أفريقيا من حيث المساحة؟",o:["الجزائر","مصر","ليبيا","السودان"],c:0},
+{q:"ما أكبر دولة منتجة للبترول في إفريقيا؟",o:["نيجيريا","مصر","أنغولا","ليبيا"],c:0},
+{q:"أين توجد شلالات فيكتوريا؟",o:["زامبيا وزيمبابوي","جنوب أفريقيا","كينيا","أوغندا"],c:0},
+{q:"ما أطول نهر في آسيا؟",o:["اليانغتسي","الهوانغ هي","النيل الأصفر","الأمروز"],c:0},
+{q:"ما عاصمة اليابان؟",o:["طوكيو","أوساكا","كيوتو","هيروشيما"],c:0},
+{q:"أين تقع جبال الروكي؟",o:["الولايات المتحدة","كندا","المكسيك","ألاسكا"],c:0},
+{q:"ما أكبر قارة من حيث السكان؟",o:["آسيا","أفريقيا","أوروبا","أمريكا"],c:0},
+{q:"أين تقع الصحراء الكبرى؟",o:["شمال أفريقيا","جنوب أفريقيا","آسيا","أستراليا"],c:0}
+
+];
+
+let current=0, score=0, answered=false;
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText = (current+1)+" / "+questions.length;
+    document.getElementById("question").innerText = questions[current].q;
+
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    // نخلط الخيارات قبل العرض
+    let opts = questions[current].o.map((text,index)=>({text,index}));
+    shuffleArray(opts);
+
+    opts.forEach(optObj=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=optObj.text;
+        d.onclick=()=>checkAnswer(d,optObj.index);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correctIndex=questions[current].c;
+    let correctText=questions[current].o[correctIndex];
+
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correctIndex){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops.forEach(o=>{ if(o.innerText===correctText) o.classList.add("correct"); });
+
+        let msg=document.getElementById("correctAnswer");
+        msg.innerHTML="✅ الإجابة الصحيحة: <b>"+correctText+"</b>";
+        msg.style.display="block";
+    }
+
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        document.querySelector(".card").innerHTML=
+        `<div class="result">
+        انتهى الاختبار ✅<br><br>
+        الدرجة النهائية: ${score} من ${questions.length}
+        </div>`;
+    }
+}
+
+/* التايمر */
+let time=30*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

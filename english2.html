@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار اللغة الانجليزية</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+.container{padding:15px;}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+}
+.option.correct{background:#4CAF50;color:#fff}
+.option.wrong{background:#E53935;color:#fff}
+.option.disabled{pointer-events:none}
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{opacity:1;pointer-events:auto}
+
+/* ===== Scoreboard ===== */
+.scoreboard{
+    text-align:center;
+    padding:25px;
+}
+.score{
+    font-size:26px;
+    color:#0D47A1;
+    margin-bottom:10px;
+}
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+.progress-bar{
+    height:18px;
+    background:#4CAF50;
+    width:0%;
+}
+.grade{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:15px;
+}
+.good{color:#2E7D32}
+.mid{color:#F9A825}
+.bad{color:#E53935}
+
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">اختبار اللغة الإنجليزية</div>
+
+<div class="top-info">
+    <div id="timer">40:00</div>
+    <div id="counter">1 / 100</div>
+</div>
+
+<div class="container">
+    <div class="card" id="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+
+{q:"Which animal is known as the 'King of the Arctic'?",o:["lion","polar bear","tiger","elephant"],c:1},
+{q:"Choose the correct past form: 'to eat'",o:["eated","ate","eaten","eat"],c:1},
+{q:"Which is correct plural of 'mouse'?",o:["mouses","mouse","mice","mousees"],c:2},
+{q:"She ____ her homework before dinner.",o:["finished","had finished","has finished","finishes"],c:1},
+{q:"Choose the correct preposition: He arrived ____ time.",o:["at","in","on","by"],c:0},
+{q:"I wish I ____ the answer.",o:["know","knew","known","had known"],c:1},
+{q:"He ____ to school every day.",o:["go","goes","gone","is going"],c:1},
+{q:"Which sentence is in the Present Perfect?",o:["He went home","He has gone home","He goes home","He is going home"],c:1},
+{q:"If I ____ enough money, I would buy a car.",o:["have","had","has","having"],c:1},
+{q:"Choose the correct spelling:",o:["receive","recieve","receve","recive"],c:0},
+{q:"The opposite of 'difficult' is:",o:["easy","hard","heavy","strong"],c:0},
+{q:"Choose the correct article: I saw ____ interesting movie.",o:["a","an","the","no article"],c:1},
+{q:"The adjective form of 'beauty' is:",o:["beautiful","beauty","beautify","beauties"],c:0},
+{q:"Choose the correct sentence:",o:["She don't like cats","She doesn’t like cats","She didn’t liked cats","She not likes cats"],c:1},
+{q:"Which word is a conjunction?",o:["and","or","but","all of the above"],c:3},
+{q:"Choose the correct comparative:",o:["gooder","more good","better","best"],c:2},
+{q:"We use 'since' for:",o:["a period","a point in time","future actions","both"],c:1},
+{q:"He said he ____ come.",o:["will","would","can","may"],c:1},
+{q:"Which word is a verb?",o:["quick","run","blue","happy"],c:1},
+{q:"Choose the correct sentence:",o:["There is many books","There are many books","There was many books","There be many books"],c:1},
+{q:"Which is correct future form?",o:["I am go","I will go","I goes","I going"],c:1},
+{q:"The phrase 'get up' is a:",o:["noun","adjective","phrasal verb","verb"],c:2},
+{q:"Which is a modal verb?",o:["can","have","do","to"],c:0},
+{q:"He has been living here ____ 2018.",o:["since","for","ago","in"],c:0},
+{q:"Choose the correct preposition: She is good ____ tennis.",o:["in","at","on","for"],c:1},
+{q:"The superlative of 'big' is:",o:["bigger","biggest","more big","most big"],c:1},
+{q:"Which is the correct spelling?",o:["accommodate","acommodate","accomodate","acomodate"],c:0},
+{q:"Which word is a noun?",o:["walk","beautiful","happiness","quick"],c:2},
+{q:"Choose the correct question form:",o:["Do she like coffee?","Does she like coffee?","She does like coffee?","Does she likes coffee?"],c:1},
+{q:"I ____ my book tomorrow.",o:["will finish","finished","finish","am finish"],c:0},
+{q:"Choose the correct gerund: I enjoy ____ movies.",o:["watch","watching","to watch","watched"],c:1},
+{q:"Which word is an adverb?",o:["quick","quickly","quicker","quickest"],c:1},
+{q:"Choose the correct sentence:",o:["He live here","He lives here","He lived here","He living here"],c:1},
+{q:"Which is a subject pronoun?",o:["me","him","they","us"],c:2},
+{q:"Which tense is 'I am eating'?",o:["Past Simple","Present Simple","Future Simple","Present Continuous"],c:3},
+{q:"Choose the correct infinitive form:",o:["to go","go","going","gone"],c:0},
+{q:"The opposite of 'strong' is:",o:["weak","short","little","high"],c:0},
+{q:"Which is a linking verb?",o:["run","stay","is","jump"],c:2},
+{q:"Choose correct relative pronoun: The girl ____ sings is my friend.",o:["who","which","whom","whose"],c:0},
+{q:"He ____ eating breakfast at 8 am.",o:["is","are","was","will"],c:0},
+{q:"Choose the correct past participle of 'see':",o:["saw","seen","see","seeing"],c:1},
+{q:"Which is countable noun?",o:["rice","water","book","information"],c:2},
+{q:"Choose the correct indirect speech: He said, 'I am happy'.",o:["He said he was happy","He said he is happy","He said he were happy","He said he will be happy"],c:0},
+{q:"Choose correct preposition: The book is ____ the table.",o:["in","on","at","under"],c:1},
+{q:"Which is correct adjective order?",o:["size > opinion > color","color > size > opinion","opinion > size > color","opinion > color > size"],c:0},
+{q:"Complete: This is the book ____ I told you about.",o:["which","who","where","whose"],c:0},
+{q:"Choose the correct tense: She ____ here since morning.",o:["is","has been","was","will be"],c:1},
+{q:"Which word is a demonstrative pronoun?",o:["this","he","run","big"],c:0},
+{q:"Choose the correct article: ____ apple a day keeps the doctor away.",o:["A","An","The","No article"],c:1},
+{q:"The correct spelling: 'definitely' is:",o:["definately","definetly","definitely","definantly"],c:2}
+
+
+];
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correct=questions[current].c;
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correct){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correct].classList.add("correct");
+        document.getElementById("correctAnswer").innerHTML=
+        "✅ الإجابة الصحيحة: <b>"+questions[current].o[correct]+"</b>";
+        document.getElementById("correctAnswer").style.display="block";
+    }
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        showScoreboard();
+    }
+}
+
+function showScoreboard(){
+    let percent = Math.round((score/questions.length)*100);
+    let gradeText="", gradeClass="";
+
+    if(percent>=80){gradeText="ممتاز";gradeClass="good";}
+    else if(percent>=60){gradeText="جيد جدًا";gradeClass="mid";}
+    else{gradeText="يحتاج مراجعة";gradeClass="bad";}
+
+    document.getElementById("card").innerHTML=`
+    <div class="scoreboard">
+        <div class="score">درجتك: ${score} / ${questions.length}</div>
+        <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+        </div>
+        <div>النسبة المئوية: <b>${percent}%</b></div>
+        <div class="grade ${gradeClass}">التقييم: ${gradeText}</div>
+    </div>`;
+}
+
+/* Timer */
+let time=40*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>

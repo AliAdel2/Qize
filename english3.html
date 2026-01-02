@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار اللغة الانجليزية</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Tahoma, Arial;
+    background:#f4f6f8;
+}
+.header{
+    background:linear-gradient(135deg,#0D47A1,#1976D2);
+    color:#FFD84D;
+    padding:22px 15px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+}
+.top-info{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 18px;
+    font-size:15px;
+    color:#0D47A1;
+    font-weight:bold;
+}
+.container{padding:15px;}
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+.question{
+    font-size:19px;
+    margin-bottom:20px;
+    color:#0D47A1;
+    text-align:center;
+}
+.option{
+    background:#FFF9E1;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:14px;
+    font-size:16px;
+    cursor:pointer;
+    border:2px solid #FFD84D;
+}
+.option.correct{background:#4CAF50;color:#fff}
+.option.wrong{background:#E53935;color:#fff}
+.option.disabled{pointer-events:none}
+.correct-answer{
+    margin-top:12px;
+    padding:12px;
+    background:#E8F5E9;
+    border-radius:12px;
+    color:#2E7D32;
+    font-size:15px;
+    display:none;
+}
+.next-btn{
+    margin-top:15px;
+    background:#1976D2;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    border-radius:16px;
+    font-size:17px;
+    cursor:pointer;
+    opacity:.5;
+    pointer-events:none;
+}
+.next-btn.active{opacity:1;pointer-events:auto}
+
+/* ===== Scoreboard ===== */
+.scoreboard{
+    text-align:center;
+    padding:25px;
+}
+.score{
+    font-size:26px;
+    color:#0D47A1;
+    margin-bottom:10px;
+}
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+.progress-bar{
+    height:18px;
+    background:#4CAF50;
+    width:0%;
+}
+.grade{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:15px;
+}
+.good{color:#2E7D32}
+.mid{color:#F9A825}
+.bad{color:#E53935}
+
+@media(max-width:600px){
+    .question{font-size:18px}
+    .option{font-size:15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">اختبار اللغة الإنجليزية</div>
+
+<div class="top-info">
+    <div id="timer">40:00</div>
+    <div id="counter">1 / 100</div>
+</div>
+
+<div class="container">
+    <div class="card" id="card">
+        <div class="question" id="question"></div>
+        <div id="options"></div>
+        <div class="correct-answer" id="correctAnswer"></div>
+        <div class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي</div>
+    </div>
+</div>
+
+<script>
+const questions = [
+
+{q:"Which animal has a long neck and lives in Africa?",o:["Elephant","Giraffe","Lion","Zebra"],c:1},
+{q:"Which animal is known as the king of the jungle?",o:["Tiger","Elephant","Lion","Giraffe"],c:2},
+{q:"The opposite of 'fast' is:",o:["slow","quick","rapid","swift"],c:0},
+{q:"Choose the correct plural: sheep →",o:["sheeps","sheep","sheepes","shapes"],c:1},
+{q:"Which animal jumps and lives in trees?",o:["Dog","Monkey","Elephant","Lion"],c:1},
+{q:"The color of the sky on a clear day is:",o:["green","yellow","blue","red"],c:2},
+{q:"What do you use to eat soup?",o:["fork","spoon","knife","plate"],c:1},
+{q:"Choose the correct past tense: 'to run'",o:["run","ran","runned","running"],c:1},
+{q:"The opposite of 'expensive' is:",o:["cheap","large","small","long"],c:0},
+{q:"Which object is used to see far away?",o:["microscope","telescope","binoculars","camera"],c:1},
+{q:"Choose the correct article: ___ orange is sweet.",o:["a","an","the","no article"],c:1},
+{q:"The opposite of 'happy' is:",o:["glad","sad","bright","kind"],c:1},
+{q:"Which animal can fly?",o:["Penguin","Eagle","Elephant","Snake"],c:1},
+{q:"Which animal lives in the ocean?",o:["camel","shark","tiger","rabbit"],c:1},
+{q:"The opposite of 'big' is:",o:["tiny","huge","tall","wide"],c:0},
+{q:"Choose the correct sentence:",o:["He go to school","He goes to school","He gone to school","He going to school"],c:1},
+{q:"Which animal eats bamboo?",o:["Lion","Giraffe","Panda","Horse"],c:2},
+{q:"The color of grass is:",o:["blue","red","green","yellow"],c:2},
+{q:"What do you wear on your feet?",o:["shirt","hat","shoes","gloves"],c:2},
+{q:"Choose the correct past participle: 'to write'",o:["wrote","written","writing","writed"],c:1},
+{q:"Which animal lives in cold places?",o:["Penguin","Camel","Elephant","Tiger"],c:0},
+{q:"The opposite of 'hot' is:",o:["cold","warm","cool","freezing"],c:0},
+{q:"Choose the correct comparative:",o:["more tall","taller","tallest","most tall"],c:1},
+{q:"Which animal has stripes?",o:["zebra","lion","bear","dog"],c:0},
+{q:"Choose the correct preposition: The cat is ____ the table.",o:["in","on","under","above"],c:2},
+{q:"Which animal has a trunk?",o:["elephant","giraffe","lion","zebra"],c:0},
+{q:"The opposite of 'noisy' is:",o:["quiet","loud","hard","soft"],c:0},
+{q:"Which animal is a pet?",o:["shark","dog","lion","tiger"],c:1},
+{q:"Choose the correct spelling:",o:["necessary","neccessary","necessery","necesary"],c:0},
+{q:"Which object shows time?",o:["clock","chair","book","window"],c:0},
+{q:"The opposite of 'clean' is:",o:["dirty","bright","fresh","smooth"],c:0},
+{q:"Which animal hops?",o:["elephant","kangaroo","lion","giraffe"],c:1},
+{q:"Choose the correct form: She ___ a book now.",o:["reads","is reading","read","reading"],c:1},
+{q:"Which animal can swim?",o:["dog","lion","fish","cat"],c:2},
+{q:"The opposite of 'young' is:",o:["old","youngest","older","eldest"],c:0},
+{q:"Choose the correct question: ___ you like tea?",o:["Do","Are","Have","Did"],c:0},
+{q:"Which animal has sharp teeth?",o:["cow","sheep","lion","horse"],c:2},
+{q:"The opposite of 'full' is:",o:["empty","open","close","broken"],c:0},
+{q:"What do you read?",o:["book","cake","car","house"],c:0},
+{q:"Which animal lives in the desert?",o:["camel","whale","penguin","tiger"],c:0},
+{q:"Choose the correct modal: You ___ study hard.",o:["must","can","will","may"],c:0},
+{q:"The opposite of 'fast' is:",o:["quick","slow","rapid","swift"],c:1},
+{q:"Which object helps you write?",o:["pencil","plate","chair","window"],c:0},
+{q:"Choose the correct tense: I ___ breakfast every day.",o:["eat","ate","eating","eaten"],c:0},
+{q:"Which animal has a pouch?",o:["kangaroo","tiger","zebra","elephant"],c:0},
+{q:"Which animal is known for its long ears?",o:["rabbit","lion","bear","pig"],c:0},
+{q:"What do you use to cut paper?",o:["spoon","knife","scissors","fork"],c:2},
+{q:"The opposite of 'dark' is:",o:["light","deep","hard","soft"],c:0},
+{q:"Which animal is the tallest?",o:["rabbit","giraffe","lion","dog"],c:1},
+{q:"Choose the correct past form: 'to swim'",o:["swimmed","swam","swum","swimming"],c:1},
+{q:"Which animal has a shell?",o:["turtle","lion","dog","bird"],c:0},
+{q:"The opposite of 'happy' is:",o:["sad","angry","tired","weak"],c:0},
+{q:"Choose the correct gerund: I enjoy ___ football.",o:["play","playing","to play","played"],c:1},
+{q:"Which object shows temperature?",o:["clock","thermometer","calendar","mirror"],c:1},
+{q:"Choose the correct meaning of 'environment':",o:["مَكان","بيئة","منزل","سيارة"],c:1},
+{q:"Which word is opposite in meaning to 'increase'?",o:["grow","rise","decrease","expand"],c:2},
+{q:"Choose the correct form: She ____ piano every weekend.",o:["play","plays","played","is playing"],c:1},
+{q:"The sentence 'They are studying now' is in:",o:["Past Simple","Future Simple","Present Continuous","Present Perfect"],c:2},
+{q:"Which is a countable noun?",o:["money","information","apple","rice"],c:2},
+{q:"Choose the correct word: I can’t find my ____.",o:["book","books","bookes","booky"],c:0},
+{q:"Which word is an adjective?",o:["quickly","quick","quickness","quicker"],c:1},
+{q:"The opposite of 'difficult' is:",o:["hard","easy","heavy","strong"],c:1},
+{q:"Which tense: I have just eaten lunch?",o:["Present Perfect","Past Simple","Future Perfect","Present Continuous"],c:0},
+{q:"Choose the correct preposition: She is afraid ____ dogs.",o:["to","of","with","for"],c:1},
+{q:"Which word is a pronoun?",o:["apple","they","run","blue"],c:1},
+{q:"Choose the correct comparative: This book is ____ than that one.",o:["more better","better","best","more good"],c:1},
+{q:"The opposite of 'empty' is:",o:["full","filled","filled up","complete"],c:0},
+{q:"Choose the correct modal: You ____ see a doctor.",o:["must","may","should","all of the above"],c:2},
+{q:"Which is the correct passive form: The letter ____ by her yesterday.",o:["is written","was written","wrote","written"],c:1},
+{q:"Choose the correct subject: ____ are my friends.",o:["He","They","It","She"],c:1}
+
+];
+
+let current=0, score=0, answered=false;
+
+function loadQuestion(){
+    answered=false;
+    document.getElementById("nextBtn").classList.remove("active");
+    document.getElementById("correctAnswer").style.display="none";
+
+    document.getElementById("counter").innerText =
+    (current+1)+" / "+questions.length;
+
+    document.getElementById("question").innerText = questions[current].q;
+    let options=document.getElementById("options");
+    options.innerHTML="";
+
+    questions[current].o.forEach((opt,i)=>{
+        let d=document.createElement("div");
+        d.className="option";
+        d.innerText=opt;
+        d.onclick=()=>checkAnswer(d,i);
+        options.appendChild(d);
+    });
+}
+
+function checkAnswer(div,index){
+    if(answered) return;
+    answered=true;
+
+    let correct=questions[current].c;
+    let ops=document.querySelectorAll(".option");
+    ops.forEach(o=>o.classList.add("disabled"));
+
+    if(index===correct){
+        div.classList.add("correct");
+        score++;
+    }else{
+        div.classList.add("wrong");
+        ops[correct].classList.add("correct");
+        document.getElementById("correctAnswer").innerHTML=
+        "✅ الإجابة الصحيحة: <b>"+questions[current].o[correct]+"</b>";
+        document.getElementById("correctAnswer").style.display="block";
+    }
+    document.getElementById("nextBtn").classList.add("active");
+}
+
+function nextQuestion(){
+    if(!answered) return;
+
+    if(current < questions.length-1){
+        current++;
+        loadQuestion();
+    }else{
+        showScoreboard();
+    }
+}
+
+function showScoreboard(){
+    let percent = Math.round((score/questions.length)*100);
+    let gradeText="", gradeClass="";
+
+    if(percent>=80){gradeText="ممتاز";gradeClass="good";}
+    else if(percent>=60){gradeText="جيد جدًا";gradeClass="mid";}
+    else{gradeText="يحتاج مراجعة";gradeClass="bad";}
+
+    document.getElementById("card").innerHTML=`
+    <div class="scoreboard">
+        <div class="score">درجتك: ${score} / ${questions.length}</div>
+        <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+        </div>
+        <div>النسبة المئوية: <b>${percent}%</b></div>
+        <div class="grade ${gradeClass}">التقييم: ${gradeText}</div>
+    </div>`;
+}
+
+/* Timer */
+let time=40*60;
+setInterval(()=>{
+    let m=Math.floor(time/60);
+    let s=time%60;
+    document.getElementById("timer").innerText=
+    m+":"+(s<10?"0"+s:s);
+    if(time>0) time--;
+},1000);
+
+loadQuestion();
+</script>
+
+</body>
+</html>
